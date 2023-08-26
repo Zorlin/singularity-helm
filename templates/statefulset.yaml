@@ -1,0 +1,104 @@
+{{- $sizeConfig := include "singularity.getSizeConfig" . | fromYaml }}
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ .Values.global.customer.name }}-{{ .Values.product }}
+  namespace: customer-{{ .Values.global.customer.name }}
+  annotations:
+    argocd.argoproj.io/sync-wave: "15"
+  labels:
+    app: {{ .Values.global.customer.name }}-{{ .Values.product }}
+spec:
+  serviceName: {{ .Values.global.customer.name }}-{{ .Values.product }}
+  podManagementPolicy: "Parallel"
+  selector:
+    matchLabels:
+      app: {{ .Values.global.customer.name }}-{{ .Values.product }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.global.customer.name }}-{{ .Values.product }}
+    spec:
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      initContainers:
+      - name: init-storage
+        image: busybox
+        command: ["sh", "-c", "mkdir -p /storage/singularity ; chown -R 1337:1337 /storage/"]
+        securityContext:
+          runAsUser: 0
+          runAsGroup: 0
+        volumeMounts:
+        - name: storage
+          mountPath: /storage
+      containers:
+      - name: {{ .Values.product }}_api
+        image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+        securityContext:
+          {{- toYaml .Values.securityContext | nindent 10 }}
+        workingDir: /storage
+        command:
+          - "run api --bind :9090"
+          {{- if (index .Values.global.products (index .Values.product)).customFlags }}
+          {{- range $key, $value := (index .Values.global.products (index .Values.product)).customFlags }}
+          - "--{{ $key }}={{ $value }}"
+          {{- end }}
+          {{- end }}
+        envFrom:
+          - configMapRef:
+              name: {{ .Values.global.customer.name }}-{{ .Values.product }}-config
+        ports:
+          - name: singularity-http
+            containerPort: 9090
+            protocol: TCP
+        # readinessProbe:
+        #  httpGet:
+        #    path: /health/ping
+        #    port: singularity-http
+        resources:
+          limits:
+            cpu: "{{ $sizeConfig.cpuLimit }}"
+            memory: "{{ $sizeConfig.memoryLimit }}"
+          requests:
+            cpu: "{{ $sizeConfig.cpuRequest }}"
+            memory: "{{ $sizeConfig.memoryRequest }}"
+        volumeMounts:
+          - name: storage
+            mountPath: /storage
+      - name: {{ .Values.product }}_dataset_worker
+        image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+        securityContext:
+          {{- toYaml .Values.securityContext | nindent 10 }}
+        workingDir: /storage
+        command:
+          - "run dataset-worker"
+          {{- if (index .Values.global.products (index .Values.product)).customWorkerFlags }}
+          {{- range $key, $value := (index .Values.global.products (index .Values.product)).customWorkerFlags }}
+          - "--{{ $key }}={{ $value }}"
+          {{- end }}
+          {{- end }}
+        envFrom:
+          - configMapRef:
+              name: {{ .Values.global.customer.name }}-{{ .Values.product }}-config
+        ports:
+          - name: singularity-http
+            containerPort: 9090
+            protocol: TCP
+        # readinessProbe:
+        #  httpGet:
+        #    path: /health/ping
+        #    port: singularity-http
+        resources:
+          limits:
+            cpu: "{{ $sizeConfig.cpuLimit }}"
+            memory: "{{ $sizeConfig.memoryLimit }}"
+          requests:
+            cpu: "{{ $sizeConfig.cpuRequest }}"
+            memory: "{{ $sizeConfig.memoryRequest }}"
+        volumeMounts:
+          - name: storage
+            mountPath: /storage
+      volumes:
+      - name: storage
+        persistentVolumeClaim:
+          claimName: {{ .Values.global.customer.name }}-{{ .Values.product }}-storage

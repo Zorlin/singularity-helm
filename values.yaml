@@ -1,0 +1,83 @@
+# Default values for customer-provisioned-infrastructure Delta.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+product: singularity
+
+replicaCount: 1
+
+image:
+  repository: ghcr.io/data-preservation-programs/singularity
+  pullPolicy: Always
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "main"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext:
+  fsGroup: 1337
+
+securityContext:
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  runAsUser: 1337
+
+service:
+  type: ClusterIP
+  port: 9090
+
+resources: {}
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 20
+  targetCPUUtilizationPercentage: 80
+  targetMemoryUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+tshirtSize: basic
+
+sizes:
+  basic:
+    cpuLimit: "1000m"
+    cpuRequest: "100m"
+    memoryLimit: "2Gi"
+    memoryRequest: "1Gi"
+    storage: "20Ti"
+  heavy:
+    cpuLimit: "8000m"
+    cpuRequest: "200m"
+    memoryLimit: "64Gi"
+    memoryRequest: "16Gi"
+    storage: "100Ti"
+
+# These are for testing, and will be overridden by a "real" customer
+global:
+  customer:
+    name: test
+  products:
+    singularity:
+      tshirtSize: basic
+      ingressName: test.singularity.fdi.network

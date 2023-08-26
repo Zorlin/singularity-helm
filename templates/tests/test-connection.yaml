@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "{{ include "singularity.fullname" . }}-test-connection"
+  labels:
+    {{- include "singularity.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": test
+spec:
+  containers:
+    - name: wget
+      image: busybox
+      command: ['wget']
+      args: ['{{ include "singularity.fullname" . }}:{{ .Values.service.port }}']
+  restartPolicy: Never
