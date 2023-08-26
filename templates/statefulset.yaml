@@ -68,7 +68,7 @@ spec:
             memory: "{{ $sizeConfig.memoryRequest }}"
         volumeMounts:
           - name: storage
-            mountPath: /storage
+            mountPath: /app/storage
       - name: {{ .Values.product }}-dataset-worker
         image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
         securityContext:
@@ -99,7 +99,7 @@ spec:
             memory: "{{ $sizeConfig.memoryRequest }}"
         volumeMounts:
           - name: storage
-            mountPath: /storage
+            mountPath: /app/storage
       volumes:
       - name: storage
         persistentVolumeClaim:
