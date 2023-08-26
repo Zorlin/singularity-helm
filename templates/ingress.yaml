@@ -23,7 +23,7 @@ spec:
           service:
             name: {{ .Values.global.customer.name }}-{{ .Values.product }}
             port:
-              name: singularity-http
+              name: singularityhttp
   tls:
   - hosts:
     - {{ .Values.global.products.singularity.ingressName }}

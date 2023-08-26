@@ -48,13 +48,13 @@ spec:
           - configMapRef:
               name: {{ .Values.global.customer.name }}-{{ .Values.product }}-config
         ports:
-          - name: singularity-http
+          - name: singularityhttp
             containerPort: 9090
             protocol: TCP
         # readinessProbe:
         #  httpGet:
         #    path: /health/ping
-        #    port: singularity-http
+        #    port: singularityhttp
         resources:
           limits:
             cpu: "{{ $sizeConfig.cpuLimit }}"
@@ -80,14 +80,10 @@ spec:
         envFrom:
           - configMapRef:
               name: {{ .Values.global.customer.name }}-{{ .Values.product }}-config
-        ports:
-          - name: singularity-http
-            containerPort: 9090
-            protocol: TCP
         # readinessProbe:
         #  httpGet:
         #    path: /health/ping
-        #    port: singularity-http
+        #    port: singularityhttp
         resources:
           limits:
             cpu: "{{ $sizeConfig.cpuLimit }}"

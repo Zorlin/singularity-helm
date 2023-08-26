@@ -9,8 +9,8 @@ spec:
   type: {{ .Values.service.type }}
   ports:
     - port: {{ .Values.service.port }}
-      targetPort: singularity-http
+      targetPort: singularityhttp
       protocol: TCP
-      name: singularity-http
+      name: singularityhttp
   selector:
     app: {{ .Values.global.customer.name }}-{{ .Values.product }}
