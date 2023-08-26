@@ -21,7 +21,7 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: {{ .Values.global.customer.name }}-{{ .Values.product }}
+            name: singularity-api
             port:
               name: singularityhttp
   tls:
