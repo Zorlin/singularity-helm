@@ -32,7 +32,7 @@ spec:
         - name: storage
           mountPath: /storage
       containers:
-      - name: {{ .Values.product }}_api
+      - name: {{ .Values.product }}-api
         image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
         securityContext:
           {{- toYaml .Values.securityContext | nindent 10 }}
@@ -65,7 +65,7 @@ spec:
         volumeMounts:
           - name: storage
             mountPath: /storage
-      - name: {{ .Values.product }}_dataset_worker
+      - name: {{ .Values.product }}-dataset-worker
         image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
         securityContext:
           {{- toYaml .Values.securityContext | nindent 10 }}
