@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .Values.global.customer.name }}-{{ .Values.product }}
+  name: {{ .Values.product }}-api
   namespace: customer-{{ .Values.global.customer.name }}
   labels:
     {{- include "singularity.labels" . | nindent 4 }}
