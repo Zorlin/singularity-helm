@@ -38,8 +38,11 @@ spec:
           {{- toYaml .Values.securityContext | nindent 10 }}
         workingDir: /storage
         command:
-          - "/app/singularity"
-          - "run api --bind :9090"
+          - /app/singularity
+          - run
+          - api
+          - --bind
+          - :9090
           {{- if (index .Values.global.products (index .Values.product)).customFlags }}
           {{- range $key, $value := (index .Values.global.products (index .Values.product)).customFlags }}
           - "--{{ $key }}={{ $value }}"
@@ -72,8 +75,9 @@ spec:
           {{- toYaml .Values.securityContext | nindent 10 }}
         workingDir: /storage
         command:
-          - "/app/singularity"
-          - "run dataset-worker"
+          - /app/singularity
+          - run
+          - dataset-worker
           {{- if (index .Values.global.products (index .Values.product)).customWorkerFlags }}
           {{- range $key, $value := (index .Values.global.products (index .Values.product)).customWorkerFlags }}
           - "--{{ $key }}={{ $value }}"

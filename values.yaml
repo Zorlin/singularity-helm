@@ -76,8 +76,8 @@ sizes:
 # These are for testing, and will be overridden by a "real" customer
 global:
   customer:
-    name: test
+    name: test2
   products:
     singularity:
       tshirtSize: basic
-      ingressName: test.singularity.fdi.network
+      ingressName: test2.singularity.fdi.network
