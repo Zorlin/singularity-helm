@@ -73,7 +73,7 @@ spec:
         image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
         securityContext:
           {{- toYaml .Values.securityContext | nindent 10 }}
-        workingDir: /storage
+        workingDir: /app/storage
         command:
           - /app/singularity
           - run
