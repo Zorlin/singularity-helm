@@ -34,6 +34,7 @@ spec:
       containers:
       - name: {{ .Values.product }}-api
         image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
         securityContext:
           {{- toYaml .Values.securityContext | nindent 10 }}
         workingDir: /app/storage
@@ -71,6 +72,7 @@ spec:
             mountPath: /app/storage
       - name: {{ .Values.product }}-dataset-worker
         image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
         securityContext:
           {{- toYaml .Values.securityContext | nindent 10 }}
         workingDir: /app/storage
