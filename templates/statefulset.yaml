@@ -181,7 +181,8 @@ spec:
           - /app/singularity
           - run
           - content-provider
-          - --http-bind :7778
+          - --http-bind
+          - :7778
           {{- if (index .Values.global.products (index .Values.product)).customDealPusherFlags }}
           {{- range $key, $value := (index .Values.global.products (index .Values.product)).customDealPusherFlags }}
           - "--{{ $key }}={{ $value }}"
