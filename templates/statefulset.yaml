@@ -31,6 +31,19 @@ spec:
         volumeMounts:
         - name: storage
           mountPath: /storage
+      - name: init-{{ .Values.product }}-db
+        image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        securityContext:
+          {{- toYaml .Values.securityContext | nindent 10 }}
+        workingDir: /app/storage
+        command:
+          - /app/singularity
+          - admin
+          - init
+        volumeMounts:
+        - name: storage
+          mountPath: /app/storage
       containers:
       - name: {{ .Values.product }}-api
         image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
@@ -49,6 +62,10 @@ spec:
           - "--{{ $key }}={{ $value }}"
           {{- end }}
           {{- end }}
+        env:
+          LOTUS_TEST: []
+          LOTUS_API: []
+          LOTUS_TOKEN: []
         envFrom:
           - configMapRef:
               name: {{ .Values.global.customer.name }}-{{ .Values.product }}-config
@@ -88,10 +105,114 @@ spec:
         envFrom:
           - configMapRef:
               name: {{ .Values.global.customer.name }}-{{ .Values.product }}-config
+        env:
+          LOTUS_TEST: []
+          LOTUS_API: []
+          LOTUS_TOKEN: []
         # readinessProbe:
         #  httpGet:
         #    path: /health/ping
         #    port: singularityhttp
+        resources:
+          limits:
+            cpu: "{{ $sizeConfig.cpuLimit }}"
+            memory: "{{ $sizeConfig.memoryLimit }}"
+          requests:
+            cpu: "{{ $sizeConfig.cpuRequest }}"
+            memory: "{{ $sizeConfig.memoryRequest }}"
+        volumeMounts:
+          - name: storage
+            mountPath: /app/storage
+      - name: {{ .Values.product }}-deal-pusher
+        image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        securityContext:
+          {{- toYaml .Values.securityContext | nindent 10 }}
+        workingDir: /app/storage
+        command:
+          - /app/singularity
+          - run
+          - deal-pusher
+          {{- if (index .Values.global.products (index .Values.product)).customDealPusherFlags }}
+          {{- range $key, $value := (index .Values.global.products (index .Values.product)).customDealPusherFlags }}
+          - "--{{ $key }}={{ $value }}"
+          {{- end }}
+          {{- end }}
+        envFrom:
+          - configMapRef:
+              name: {{ .Values.global.customer.name }}-{{ .Values.product }}-config
+        env:
+          LOTUS_TEST: []
+          LOTUS_API: []
+          LOTUS_TOKEN: []
+        resources:
+          limits:
+            cpu: "{{ $sizeConfig.cpuLimit }}"
+            memory: "{{ $sizeConfig.memoryLimit }}"
+          requests:
+            cpu: "{{ $sizeConfig.cpuRequest }}"
+            memory: "{{ $sizeConfig.memoryRequest }}"
+        volumeMounts:
+          - name: storage
+            mountPath: /app/storage
+      - name: {{ .Values.product }}-deal-tracker
+        image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        securityContext:
+          {{- toYaml .Values.securityContext | nindent 10 }}
+        workingDir: /app/storage
+        command:
+          - /app/singularity
+          - run
+          - deal-tracker
+          {{- if (index .Values.global.products (index .Values.product)).customDealPusherFlags }}
+          {{- range $key, $value := (index .Values.global.products (index .Values.product)).customDealPusherFlags }}
+          - "--{{ $key }}={{ $value }}"
+          {{- end }}
+          {{- end }}
+        envFrom:
+          - configMapRef:
+              name: {{ .Values.global.customer.name }}-{{ .Values.product }}-config
+        env:
+          LOTUS_TEST: []
+          LOTUS_API: []
+          LOTUS_TOKEN: []
+        resources:
+          limits:
+            cpu: "{{ $sizeConfig.cpuLimit }}"
+            memory: "{{ $sizeConfig.memoryLimit }}"
+          requests:
+            cpu: "{{ $sizeConfig.cpuRequest }}"
+            memory: "{{ $sizeConfig.memoryRequest }}"
+        volumeMounts:
+          - name: storage
+            mountPath: /app/storage
+      - name: {{ .Values.product }}-content-provider
+        image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        securityContext:
+          {{- toYaml .Values.securityContext | nindent 10 }}
+        workingDir: /app/storage
+        command:
+          - /app/singularity
+          - run content-provider
+          - --http-bind :7778
+          {{- if (index .Values.global.products (index .Values.product)).customDealPusherFlags }}
+          {{- range $key, $value := (index .Values.global.products (index .Values.product)).customDealPusherFlags }}
+          - "--{{ $key }}={{ $value }}"
+          {{- end }}
+          {{- end }}
+        envFrom:
+          - configMapRef:
+              name: {{ .Values.global.customer.name }}-{{ .Values.product }}-config
+        env:
+          LOTUS_TEST: []
+          LOTUS_API: []
+          LOTUS_TOKEN: []
+        ports:
+          - name: singularitycprv
+            containerPort: 7778
+            protocol: TCP
         resources:
           limits:
             cpu: "{{ $sizeConfig.cpuLimit }}"
