@@ -62,10 +62,6 @@ spec:
           - "--{{ $key }}={{ $value }}"
           {{- end }}
           {{- end }}
-        env:
-          - name: "LOTUS_TEST"
-          - name: "LOTUS_API"
-          - name: "LOTUS_TOKEN"
         envFrom:
           - configMapRef:
               name: {{ .Values.global.customer.name }}-{{ .Values.product }}-config
@@ -105,10 +101,6 @@ spec:
         envFrom:
           - configMapRef:
               name: {{ .Values.global.customer.name }}-{{ .Values.product }}-config
-        env:
-          - name: "LOTUS_TEST"
-          - name: "LOTUS_API"
-          - name: "LOTUS_TOKEN"
         # readinessProbe:
         #  httpGet:
         #    path: /health/ping
@@ -141,10 +133,6 @@ spec:
         envFrom:
           - configMapRef:
               name: {{ .Values.global.customer.name }}-{{ .Values.product }}-config
-        env:
-          - name: "LOTUS_TEST"
-          - name: "LOTUS_API"
-          - name: "LOTUS_TOKEN"
         resources:
           limits:
             cpu: "{{ $sizeConfig.cpuLimit }}"
@@ -173,10 +161,6 @@ spec:
         envFrom:
           - configMapRef:
               name: {{ .Values.global.customer.name }}-{{ .Values.product }}-config
-        env:
-          - name: "LOTUS_TEST"
-          - name: "LOTUS_API"
-          - name: "LOTUS_TOKEN"
         resources:
           limits:
             cpu: "{{ $sizeConfig.cpuLimit }}"
@@ -195,7 +179,8 @@ spec:
         workingDir: /app/storage
         command:
           - /app/singularity
-          - run content-provider
+          - run
+          - content-provider
           - --http-bind :7778
           {{- if (index .Values.global.products (index .Values.product)).customDealPusherFlags }}
           {{- range $key, $value := (index .Values.global.products (index .Values.product)).customDealPusherFlags }}
@@ -205,10 +190,6 @@ spec:
         envFrom:
           - configMapRef:
               name: {{ .Values.global.customer.name }}-{{ .Values.product }}-config
-        env:
-          - name: "LOTUS_TEST"
-          - name: "LOTUS_API"
-          - name: "LOTUS_TOKEN"
         ports:
           - name: singularitycprv
             containerPort: 7778
