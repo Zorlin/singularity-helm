@@ -63,9 +63,9 @@ spec:
           {{- end }}
           {{- end }}
         env:
-          LOTUS_TEST: []
-          LOTUS_API: []
-          LOTUS_TOKEN: []
+          - name: "LOTUS_TEST"
+          - name: "LOTUS_API"
+          - name: "LOTUS_TOKEN"
         envFrom:
           - configMapRef:
               name: {{ .Values.global.customer.name }}-{{ .Values.product }}-config
@@ -106,9 +106,9 @@ spec:
           - configMapRef:
               name: {{ .Values.global.customer.name }}-{{ .Values.product }}-config
         env:
-          LOTUS_TEST: []
-          LOTUS_API: []
-          LOTUS_TOKEN: []
+          - name: "LOTUS_TEST"
+          - name: "LOTUS_API"
+          - name: "LOTUS_TOKEN"
         # readinessProbe:
         #  httpGet:
         #    path: /health/ping
@@ -142,9 +142,9 @@ spec:
           - configMapRef:
               name: {{ .Values.global.customer.name }}-{{ .Values.product }}-config
         env:
-          LOTUS_TEST: []
-          LOTUS_API: []
-          LOTUS_TOKEN: []
+          - name: "LOTUS_TEST"
+          - name: "LOTUS_API"
+          - name: "LOTUS_TOKEN"
         resources:
           limits:
             cpu: "{{ $sizeConfig.cpuLimit }}"
@@ -174,9 +174,9 @@ spec:
           - configMapRef:
               name: {{ .Values.global.customer.name }}-{{ .Values.product }}-config
         env:
-          LOTUS_TEST: []
-          LOTUS_API: []
-          LOTUS_TOKEN: []
+          - name: "LOTUS_TEST"
+          - name: "LOTUS_API"
+          - name: "LOTUS_TOKEN"
         resources:
           limits:
             cpu: "{{ $sizeConfig.cpuLimit }}"
@@ -206,9 +206,9 @@ spec:
           - configMapRef:
               name: {{ .Values.global.customer.name }}-{{ .Values.product }}-config
         env:
-          LOTUS_TEST: []
-          LOTUS_API: []
-          LOTUS_TOKEN: []
+          - name: "LOTUS_TEST"
+          - name: "LOTUS_API"
+          - name: "LOTUS_TOKEN"
         ports:
           - name: singularitycprv
             containerPort: 7778
